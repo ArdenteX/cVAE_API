@@ -1,0 +1,10 @@
+Flask==3.1.2
+joblib==1.4.2
+numpy==2.3.3
+torch==2.5.1+cu124
+tortreinador==0.1.8
+tqdm==4.67.0
+gunicorn==22.*
+python-dotenv==1.0.*
+pandas
+openpyxl

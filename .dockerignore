@@ -1,0 +1,17 @@
+.git
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite
+.env
+.env.*
+.cache/
+static_test/
+tests/
+notebooks/
+*.ipynb
+dist/
+build/
+venv/
+.venv/
