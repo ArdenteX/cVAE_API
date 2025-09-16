@@ -1,7 +1,9 @@
 Flask==3.1.2
 joblib==1.4.2
 numpy==1.26.4
-torch==2.5.1+cu124
+torch==2.5.1
+torchvision==0.20.1
+torchaudio==2.5.1
 tortreinador==0.1.8
 tqdm==4.67.0
 gunicorn==22.*
