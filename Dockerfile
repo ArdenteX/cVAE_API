@@ -26,4 +26,4 @@ USER appuser
 
 EXPOSE 8000
 
-CMD ["gunicorn", "-c", "gunicorn_conf.py", "app:create_app"]
+CMD ["gunicorn", "-c", "gunicorn_conf.py", "app:create_app()"]
