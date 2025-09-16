@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import numpy as np
-from tqdm import tqdm
 
 def reparameterize(mu, log_var):
     # reparameterize
@@ -181,22 +180,21 @@ class cVAE(nn.Module):
     def pred_distribution_inference(self, X, times, device):
         condition = []
         pred_distribution = []
-        with tqdm(X, 'points') as points:
-            for x in points:
+        for x in X:
 
-                x_ = np.repeat(x.reshape(1, -1), times, axis=0)
-                # x_ = cvae_m_x_50th.transform(x_)
+            x_ = np.repeat(x.reshape(1, -1), times, axis=0)
+            # x_ = cvae_m_x_50th.transform(x_)
 
 
-                fake_y = np.random.normal(0, 1, (times, 7 * self.i_dim))
-                # fake_y = np.repeat(fake_y, times, axis=0)
+            fake_y = np.random.normal(0, 1, (times, 7 * self.i_dim))
+            # fake_y = np.repeat(fake_y, times, axis=0)
 
-                curr_prediction = self.decoder(torch.from_numpy(fake_y).to(torch.float).to(device),
-                                               torch.from_numpy(x_).to(torch.float).to(device))
+            curr_prediction = self.decoder(torch.from_numpy(fake_y).to(torch.float).to(device),
+                                           torch.from_numpy(x_).to(torch.float).to(device))
 
-                curr_prediction = curr_prediction.detach().cpu().numpy()
-                condition.append(x_)
-                pred_distribution.append(curr_prediction)
+            curr_prediction = curr_prediction.detach().cpu().numpy()
+            condition.append(x_)
+            pred_distribution.append(curr_prediction)
 
         condition = np.vstack(condition)
         pred_distribution = np.vstack(pred_distribution)

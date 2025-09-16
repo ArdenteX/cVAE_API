@@ -5,7 +5,6 @@ torch==2.5.1
 torchvision==0.20.1
 torchaudio==2.5.1
 tortreinador==0.1.8
-tqdm==4.67.0
 gunicorn==22.*
 python-dotenv==1.0.*
 pandas==2.2.3
