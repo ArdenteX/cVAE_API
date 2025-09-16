@@ -16,7 +16,15 @@ def create_app():
     cvae_model = cVAE(i_dim=OUTPUT_DIM, z_dim=int(OUTPUT_DIM * 7), num_hidden=1024,
                       c_dim=INPUT_DIM, o_dim=OUTPUT_DIM)
     init_weights(cvae_model)
-    cvae_model.load_state_dict(torch.load(PTH_PATH, weights_only=True))
+
+    if DEVICE.type == 'cpu':
+        cvae_model.load_state_dict(torch.load(PTH_PATH, weights_only=True, map_location=torch.device('cpu')))
+        print("Loaded cVAE in CPU")
+
+    else:
+        cvae_model.load_state_dict(torch.load(PTH_PATH, weights_only=True))
+        print("Loaded cVAE in GPU")
+
     cvae_model.to(DEVICE)
     cvae_model.eval()
 

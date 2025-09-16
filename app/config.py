@@ -30,3 +30,4 @@ OUTPUT_PARAM = [
 ]
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# DEVICE = torch.device('cpu')
