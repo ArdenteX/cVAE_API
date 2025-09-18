@@ -1,7 +1,7 @@
 # cVAE API
 
 ## 项目概述
-cVAE API 是一个基于 Flask 的服务，用于暴露已训练好的条件变分自编码器（conditional Variational Autoencoder，cVAE），通过行星的整体观测量来推断其内部结构的概率分布。应用在启动时会加载预训练的 PyTorch 模型和特征缩放器，支持以 JSON 或文件上传的方式进行推理。
+cVAE API 是一个基于 Flask 的服务，用于暴露已训练好的条件变分自编码器（conditional Variational Autoencoder，cVAE），帮助研究者依据行星整体观测量预测岩石系外行星的内部结构概率分布。应用在启动时会加载预训练的 PyTorch 模型和特征缩放器，支持以 JSON 或文件上传的方式进行推理。
 
 ## 主要特性
 - 在应用启动时加载预训练的 cVAE 模型与缩放器，确保推理结果可复现。
@@ -26,6 +26,7 @@ cVAE API 是一个基于 Flask 的服务，用于暴露已训练好的条件变�
 - Python 3.10 及以上
 - `requirements.txt` 中列出的依赖（Flask、PyTorch、pandas 等）。
 - 将预训练资源放置于 `static/best_model.pth`、`static/Xscaler.save`、`static/yscaler.save`。
+- 至少 1 GB 可用内存，用于加载预训练模型和缩放器。
 
 ## 本地运行
 1. 创建并激活虚拟环境。
@@ -33,12 +34,12 @@ cVAE API 是一个基于 Flask 的服务，用于暴露已训练好的条件变�
    ```bash
    pip install -r requirements.txt
    ```
-3. 设置 Flask 入口并启动开发服务器：
+3. 设置 Flask 入口并启动开发服务器（监听 `8000` 端口）：
    ```bash
    export FLASK_APP=app:create_app
-   flask run --debug
+   flask run --debug --port 8000
    ```
-   默认监听 `http://127.0.0.1:5000/api/`。
+   默认监听 `http://127.0.0.1:8000/api/`。
 
 若需使用 Gunicorn（生产环境推荐）：
 ```bash
@@ -50,6 +51,10 @@ gunicorn --config gunicorn_conf.py 'app:create_app()'
 
 ### `GET /api/hello`
 健康检查接口，返回简单的问候字符串。
+
+```bash
+curl http://127.0.0.1:8000/api/hello
+```
 
 ### `POST /api/single_prediction`
 请求体为 JSON，需提供四个必需特征（`Mass`、`Radius`、`Fe/Mg`、`Si/Mg`），每个字段建议使用列表形式以支持批量推理，可选字段 `Times` 控制每条输入生成的样本数量（默认 10）。示例：
@@ -64,6 +69,18 @@ gunicorn --config gunicorn_conf.py 'app:create_app()'
 ```
 响应会包含原始请求和按批次索引划分的 `Prediction_distribution` 结果。
 
+```bash
+curl -X POST http://127.0.0.1:8000/api/single_prediction \
+  -H "Content-Type: application/json" \
+  -d '{
+        "Mass": [1.0],
+        "Radius": [1.0],
+        "Fe/Mg": [0.5],
+        "Si/Mg": [1.0],
+        "Times": 25
+      }'
+```
+
 ### `POST /api/multi_prediction`
 与 `single_prediction` 接口的请求格式相同，主要用于同时提交多组行星数据。
 
@@ -75,11 +92,11 @@ gunicorn --config gunicorn_conf.py 'app:create_app()'
 接口会返回每行输入对应的预测分布，质量和半径相关的输出会在返回前转换回原始单位。
 
 ## 模型输出参数
-- `WRF`
-- `MRF`
-- `CRF`
-- `WMF`
-- `CMF`
+- `WRF` —— Water Radial Fraction（水层径向占比）
+- `MRF` —— Mantle Radial Fraction（地幔径向占比）
+- `CRF` —— Core Radial Fraction（地核径向占比）
+- `WMF` —— Water Mass Fraction（水层质量占比）
+- `CMF` —— Core Mass Fraction（地核质量占比）
 - `P_CMB (TPa)` —— 核幔边界压力（TeraPascal）
 - `T_CMB (10^3K)` —— 核幔边界温度（以千开尔文为单位）
 - `K2` —— 潮汐 Love 数
