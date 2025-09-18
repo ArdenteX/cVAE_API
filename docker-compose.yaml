@@ -1,0 +1,7 @@
+services:
+  cvae-api:
+    image: xavierxx/cvae-api:master
+    container_name: cvae-api
+    ports:
+      - "8000:8000"   # 左边是宿主机端口，可改；右边是容器暴露端口
+    restart: unless-stopped
